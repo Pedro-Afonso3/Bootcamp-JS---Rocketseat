@@ -1,9 +1,32 @@
-const { select } = require('@inquerer/prompts')
+const { select, input } = require('@inquirer/prompts') // Usando bibliotecas
 
-const start = async () => {
+let meta = {
+    value : "Tomar 3L de agua td dia",
+    checked : false,
+}
+
+let metas = [ meta ]
+
+const cadastrarMeta = async () => {
+    const meta = await input({message: "Digite a meta: "})
+
+    if(meta.length == 0){
+        console.log("A meta não pode estar vazia")
+        return
+    }
+
+    metas.push({ 
+        value: meta,checked: false 
+    })// Push = coloca algo na variavel
+
+}
+
+
+
+const start = async () => { // async = Torna o programa assincrono permitindo parar ele
 
     while (true){
-            const opcao = await select({
+            const opcao = await select({ // await: para o programa para esperar algo
                 message: "Menu  >" ,
                 choices: [
                     {
@@ -25,14 +48,15 @@ const start = async () => {
 
             switch(opcao){
                 case "cadastrar":
-                    console.log("Vamos cadastrar")
+                     await cadastrarMeta()
+                     console.log(metas)
                     break
                 case "listar":
                     console.log("Vamos listar")
                     break
-                case "Sair":
+                case "sair":
                     console.log("Até a próxima")
-                    return
+                    break
 
             }
     }
