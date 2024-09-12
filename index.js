@@ -1,6 +1,11 @@
 const { select, input,checkbox } = require('@inquirer/prompts') // Usando bibliotecas
 
-let metas = []
+let meta = {
+    value : "Tomar 3L de agua td dia",
+    checked : false,
+}
+
+let metas = [ meta ]
 
 const cadastrarMeta = async () => {
     const meta = await input({message: "Digite a meta: "})
@@ -61,7 +66,7 @@ const metasRealizadas = async () => {
     }
 
     await select({
-        message: "Metas realizadas " + realizadas.length,
+        message: "Metas realizadas: " + realizadas.length,
         choices: [...realizadas]
     })
 }
@@ -77,10 +82,41 @@ const metasAbertas = async () => {
     }
 
     await select({
-        message: "Metas Abertas " + abertas.length,
+        message: "Metas Abertas: " + abertas.length,
         choices: [...abertas]
     })
 }
+
+const deletarMetas = async () => {
+    if(metas.length == 0) {
+        mensagem = "Não existem metas!"
+        return
+    }
+
+    const metasDesmarcadas = metas.map((meta) => {
+        return { value: meta.value, checked: false }
+    })
+
+    const itemsADeletar = await checkbox({
+        message: "Selecione item para deletar",
+        choices: [...metasDesmarcadas],
+        instructions: false,
+    })
+
+    if (itemsADeletar.length == 0) {
+        mensagem = "Nenhum item para deletar!"
+        return
+    }
+
+    itemsADeletar.forEach((item) => {
+        metas = metas.filter((meta) => {
+            return meta.value != item
+        })
+    })
+
+    mensagem = "Meta(s) deleta(s) com sucesso!"
+}
+
 
 const start = async () => { // async = Torna o programa assincrono permitindo parar ele
 
@@ -108,6 +144,11 @@ const start = async () => { // async = Torna o programa assincrono permitindo pa
 
                     },
                     {
+                        name:"Deletar Metas",
+                        value:"deletar"
+
+                    },
+                    {
                         name: "Sair",
                         value: "sair"
                     }
@@ -131,6 +172,10 @@ const start = async () => { // async = Torna o programa assincrono permitindo pa
 
                 case "abertas":
                     await metasAbertas()
+                    break
+
+                case "deletar":
+                    await deletarMetas()
                     break
 
                 case "sair":
