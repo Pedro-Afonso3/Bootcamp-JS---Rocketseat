@@ -1,4 +1,4 @@
-const { select, input } = require('@inquirer/prompts') // Usando bibliotecas
+const { select, input,checkbox } = require('@inquirer/prompts') // Usando bibliotecas
 
 let meta = {
     value : "Tomar 3L de agua td dia",
@@ -21,7 +21,33 @@ const cadastrarMeta = async () => {
 
 }
 
+const listarMetas = async () => {
+    const respostas = await checkbox({
+        message: "Use as setas para mudar de meta, o espaço para marcar/desmarcar e o Enter para finalizar essa etapa",
+        choices: [...metas],// Os ... copiam os itens de uma variavel pra outra
+        instructions: false
+    })
 
+    if (respostas.length == 0){
+        console.log('Nenhuma meta selecionada')
+        return 
+    }
+
+    metas.forEach((m)=> {
+        m.checked = false
+    })
+
+    respostas.forEach((resposta) => {// forEach = para cada elemento
+        const meta = metas.find((m) => {
+            return m.value == resposta
+        })
+
+        meta.checked = true
+    })
+
+    console.log('Meta(s) marcadas como concluída(s) ')
+
+}
 
 const start = async () => { // async = Torna o programa assincrono permitindo parar ele
 
@@ -52,11 +78,11 @@ const start = async () => { // async = Torna o programa assincrono permitindo pa
                      console.log(metas)
                     break
                 case "listar":
-                    console.log("Vamos listar")
+                    await listarMetas()
                     break
                 case "sair":
                     console.log("Até a próxima")
-                    break
+                    return
 
             }
     }
