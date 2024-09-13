@@ -8,7 +8,7 @@ let metas
 const carregarMetas = async()=> {
     try{
         const dados = await fs.readFile("metas.json","utf-8") // (fs.readFile) -> lê o arquivo json, e tem q passar o tipo de dado (utf-8)
-        metas = JSON.parse(dados)
+        metas = JSON.parse(dados)// .parse = transforma de JSON para JS
     }
     catch(erro){
         metas = []
@@ -16,7 +16,7 @@ const carregarMetas = async()=> {
 }
 
 const salvarMetas = async()=> {
-    await fs.writeFile("metas.json",JSON.stringify(metas, null, 2))
+    await fs.writeFile("metas.json",JSON.stringify(metas, null, 2))// .stringify = transforma de JS para JSON
 }
 
 const cadastrarMeta = async () => {
@@ -37,7 +37,7 @@ const cadastrarMeta = async () => {
 const listarMetas = async () => {
 
     if (metas.length == 0){
-       mensagem: "Não existem metas inseridas"
+       mensagem= "Não existem metas inseridas"
         return
     }else{
     const respostas = await checkbox({
@@ -52,7 +52,7 @@ const listarMetas = async () => {
 
 
     if (respostas.length == 0){
-        mensagem: 'Nenhuma meta selecionada'
+        mensagem= 'Nenhuma meta selecionada'
         return 
     }
 
@@ -64,7 +64,7 @@ const listarMetas = async () => {
         meta.checked = true
     })
 
-    mensagem: 'Meta(s) marcadas como concluída(s) '
+    mensagem= 'Meta(s) marcadas como concluída(s) '
 }
 
 }
@@ -75,7 +75,7 @@ const metasRealizadas = async () => {
     })
 
     if (realizadas.length == 0){
-        mensagem: 'Não existem metas realizadas!'
+        mensagem= 'Não existem metas realizadas!'
         return
     }
 
@@ -91,7 +91,7 @@ const metasAbertas = async () => {
     })
 
     if (abertas.length == 0){
-        mensagem: "Não existem metas abertas"
+        mensagem= "Não existem metas abertas"
         return
     }
 
