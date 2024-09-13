@@ -1,11 +1,23 @@
 const { select, input,checkbox } = require('@inquirer/prompts') // Usando bibliotecas
+const fs = require("fs").promises // permite usar os dados do json
 
-let meta = {
-    value : "Tomar 3L de agua td dia",
-    checked : false,
+let mensagem = "Bem Vindo ao App de metas"
+
+let metas 
+
+const carregarMetas = async()=> {
+    try{
+        const dados = await fs.readFile("metas.json","utf-8") // (fs.readFile) -> lê o arquivo json, e tem q passar o tipo de dado (utf-8)
+        metas = JSON.parse(dados)
+    }
+    catch(erro){
+        metas = []
+    }
 }
 
-let metas = [ meta ]
+const salvarMetas = async()=> {
+    await fs.writeFile("metas.json",JSON.stringify(metas, null, 2))
+}
 
 const cadastrarMeta = async () => {
     const meta = await input({message: "Digite a meta: "})
@@ -19,12 +31,13 @@ const cadastrarMeta = async () => {
         value: meta,checked: false 
     })// Push = coloca algo na variavel
 
+    mensagem = "Meta cadastrada com sucesso!"
 }
 
 const listarMetas = async () => {
 
     if (metas.length == 0){
-        console.log("Não existem metas inseridas")
+       mensagem: "Não existem metas inseridas"
         return
     }else{
     const respostas = await checkbox({
@@ -39,7 +52,7 @@ const listarMetas = async () => {
 
 
     if (respostas.length == 0){
-        console.log('Nenhuma meta selecionada')
+        mensagem: 'Nenhuma meta selecionada'
         return 
     }
 
@@ -51,7 +64,8 @@ const listarMetas = async () => {
         meta.checked = true
     })
 
-    console.log('Meta(s) marcadas como concluída(s) ')}
+    mensagem: 'Meta(s) marcadas como concluída(s) '
+}
 
 }
 
@@ -61,7 +75,7 @@ const metasRealizadas = async () => {
     })
 
     if (realizadas.length == 0){
-        console.log('Não existem metas realizadas!')
+        mensagem: 'Não existem metas realizadas!'
         return
     }
 
@@ -77,7 +91,7 @@ const metasAbertas = async () => {
     })
 
     if (abertas.length == 0){
-        console.log("Não existem metas abertas")
+        mensagem: "Não existem metas abertas"
         return
     }
 
@@ -117,10 +131,23 @@ const deletarMetas = async () => {
     mensagem = "Meta(s) deleta(s) com sucesso!"
 }
 
+const mostrarMensagem = () =>{
+    console.clear()
+
+    if(mensagem != ""){
+        console.log(mensagem)
+        console.log("")
+        mensagem = ""
+    }
+}
 
 const start = async () => { // async = Torna o programa assincrono permitindo parar ele
 
-    while (true){
+    await carregarMetas()
+    while (true){  
+        mostrarMensagem()
+        await salvarMetas()
+
             const opcao = await select({ // await: para o programa para esperar algo
                 message: "Menu  >" ,
                 choices: [
@@ -159,7 +186,6 @@ const start = async () => { // async = Torna o programa assincrono permitindo pa
             switch(opcao){
                 case "cadastrar":
                      await cadastrarMeta()
-                     console.log(metas)
                     break
 
                 case "listar":
